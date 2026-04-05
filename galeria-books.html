@@ -9,13 +9,48 @@
         body { margin: 0; background: #0a0a0a; color: white; font-family: 'Poppins', sans-serif; }
         header { padding: 60px 20px; text-align: center; }
         header h1 { text-transform: uppercase; letter-spacing: 8px; font-weight: 600; margin: 0; }
-        .btn-volver { display: inline-block; margin-top: 20px; color: #3498db; text-decoration: none; font-size: 0.8em; letter-spacing: 2px; border: 1px solid #3498db; padding: 10px 20px; border-radius: 30px; transition: 0.3s; }
+        
+        .btn-volver { 
+            display: inline-block; margin-top: 20px; color: #3498db; 
+            text-decoration: none; font-size: 0.8em; letter-spacing: 2px; 
+            border: 1px solid #3498db; padding: 10px 20px; border-radius: 30px; 
+            transition: 0.3s; 
+        }
         .btn-volver:hover { background: #3498db; color: white; }
-        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; padding: 0 20px 100px; max-width: 1400px; margin: 0 auto; }
-        .foto-item { width: 100%; height: 400px; border-radius: 15px; overflow: hidden; background: #1a1a1a; }
-        .foto-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; cursor: pointer; }
+
+        .galeria-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 15px; 
+            padding: 0 20px 100px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+
+        .foto-item { 
+            width: 100%; 
+            height: 400px; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            background: #1a1a1a; 
+        }
+
+        .foto-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            cursor: pointer;
+            opacity: 0; /* Para el efecto de carga suave */
+            transition: opacity 0.5s ease-in-out, transform 0.5s;
+        }
+
+        .foto-item img.loaded { opacity: 1; }
         .foto-item img:hover { transform: scale(1.05); filter: brightness(1.1); }
-        @media (max-width: 768px) { .galeria-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; } .foto-item { height: 200px; } }
+
+        @media (max-width: 768px) { 
+            .galeria-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; } 
+            .foto-item { height: 200px; } 
+        }
     </style>
 </head>
 <body>
@@ -23,27 +58,37 @@
         <h1>BOOKS</h1>
         <a href="index.html" class="btn-volver">← VOLVER AL PORTFOLIO</a>
     </header>
-    <div class="galeria-grid">
-        <div class="foto-item"><img src="Imagenes/Books/1.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/2.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/3.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/4.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/5.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/6.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/7.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/8.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/9.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/10.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/11.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/12.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/13.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/14.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/15.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/16.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/17.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/18.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/19.jpg" alt="Books"></div>
-        <div class="foto-item"><img src="Imagenes/Books/20.jpg" alt="Books"></div>
-    </div>
+
+    <div class="galeria-grid" id="grid-books"></div>
+
+    <script>
+        const grid = document.getElementById('grid-books');
+        const cloudName = "nuestramirada";
+        const categoria = "Books"; 
+        const totalFotos = 20; 
+
+        for (let i = 1; i <= totalFotos; i++) {
+            const div = document.createElement('div');
+            div.className = 'foto-item';
+
+            const img = document.createElement('img');
+            // Mantenemos la rotación de fotógrafas para que sea justo
+            const fotografa = (i % 2 !== 0) ? "Agustina" : "Araceli";
+            
+            // Construcción de URL con optimización automática de Cloudinary
+            img.src = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/v1/Imagenes/${categoria}/${fotografa}/${i}.jpg`;
+            img.alt = `Book Fotográfico - Foto ${i}`;
+            img.loading = "lazy"; // Carga perezosa para no saturar el ancho de banda
+
+            // Efecto cuando la imagen termina de bajar
+            img.onload = () => img.classList.add('loaded');
+            
+            // Si la foto no existe en esa carpeta/número, ocultamos el div para que no quede el hueco negro
+            img.onerror = () => div.style.display = 'none';
+
+            div.appendChild(img);
+            grid.appendChild(div);
+        }
+    </script>
 </body>
 </html>
